@@ -12,13 +12,16 @@ AABTA_Trace::AABTA_Trace()
 {
 }
 
+// 타겟팅 시작 시 호출되며, 공격의 시작점(소스 액터)을 설정
 void AABTA_Trace::StartTargeting(UGameplayAbility* Ability)
 {
 	Super::StartTargeting(Ability);
 
+	// 능력을 소유한 캐릭터를 저장
 	SourceActor = Ability->GetCurrentActorInfo()->AvatarActor.Get();
 }
 
+// 트레이스를 수행하고, 생성된 타겟 데이터를 델리게이트를 통해 호출자에게 전달
 void AABTA_Trace::ConfirmTargetingAndContinue()
 {
 	if (SourceActor)
@@ -28,6 +31,7 @@ void AABTA_Trace::ConfirmTargetingAndContinue()
 	}
 }
 
+// 캐릭터를 기준으로 트레이스 작업을 수행하고, 타겟 데이터를 생성
 FGameplayAbilityTargetDataHandle AABTA_Trace::MakeTargetData() const
 {
 	ACharacter* Character = CastChecked<ACharacter>(SourceActor);

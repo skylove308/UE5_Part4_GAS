@@ -13,6 +13,8 @@ UABGA_Attack::UABGA_Attack()
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 }
 
+// UAbilityTask_PlayMontageAndWait를 통해 몽타주를 재생하고, 첫 번째 콤보 섹션을 시작
+// StartComboTimer를 호출하여 콤보 입력 가능 시간을 설정
 void UABGA_Attack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
@@ -29,10 +31,9 @@ void UABGA_Attack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 	StartComboTimer();
 }
 
+// 플레이어 입력이 발생하면 HasNextComboInput 플래그가 설정
 void UABGA_Attack::InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
 {
-	ABGAS_LOG(LogABGAS, Log, TEXT("Begin"));
-
 	if (!ComboTimerHandle.IsValid())
 	{
 		HasNextComboInput = false;
@@ -74,6 +75,7 @@ void UABGA_Attack::OnInterruptedCallback()
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, bReplicatedEndAbility, bWasCanceled);
 }
 
+// 다음 섹션 이름 계산
 FName UABGA_Attack::GetNextSection()
 {
 	CurrentCombo = FMath::Clamp(CurrentCombo + 1, 1, CurrentComboData->MaxComboCount);
@@ -81,6 +83,7 @@ FName UABGA_Attack::GetNextSection()
 	return NextSection;
 }
 
+// 타이머 설정 및 콤보 입력 대기
 void UABGA_Attack::StartComboTimer()
 {
 	int32 ComboIndex = CurrentCombo - 1;
@@ -94,6 +97,9 @@ void UABGA_Attack::StartComboTimer()
 	}
 }
 
+// 타이머가 만료되면 CheckComboInput에서 입력 플래그를 확인
+// 입력이 있다면 다음 섹션으로 이동(MontageJumpToSection)하고, 새로운 타이머를 설정하여 다음 콤보 입력을 기다림
+// 입력이 없으면 onComplete 델리게이트가 호출되며 콜백함수 실행되고 종료
 void UABGA_Attack::CheckComboInput()
 {
 	ComboTimerHandle.Invalidate();

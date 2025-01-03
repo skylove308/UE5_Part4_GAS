@@ -4,6 +4,8 @@
 #include "Animation/AnimNotify_GASAttackHitCheck.h"
 #include "AbilitySystemBlueprintLibrary.h"
 
+// UAnimNotify를 상속 받아 구현된 애니메이션 알림 클래스
+// 애니메이션의 특정 프레임에서 호출되어 GAS와 연동하는 기능 제공
 UAnimNotify_GASAttackHitCheck::UAnimNotify_GASAttackHitCheck()
 {
 }
